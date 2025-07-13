@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\futtage.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:futtage.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\properties\\resources.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:properties\\resources.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
+      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|C:\\Estudo\\Futtage\\formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|C:\\Estudo\\Futtage\\formdetalhesvideo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,40 +58,39 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Futtage",
+              "DocumentMoniker": "C:\\Estudo\\Futtage\\Futtage.csproj",
+              "RelativeDocumentMoniker": "Futtage.csproj",
+              "ToolTip": "C:\\Estudo\\Futtage\\Futtage.csproj",
+              "RelativeToolTip": "Futtage.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-13T17:53:57.397Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "FormAguarde.cs",
               "DocumentMoniker": "C:\\Estudo\\Futtage\\FormAguarde.cs",
               "RelativeDocumentMoniker": "FormAguarde.cs",
               "ToolTip": "C:\\Estudo\\Futtage\\FormAguarde.cs",
               "RelativeToolTip": "FormAguarde.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAowDkAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAAAowCoAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-13T02:11:32.37Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "FormAguarde.cs [Projeto]",
               "DocumentMoniker": "C:\\Estudo\\Futtage\\FormAguarde.cs",
               "RelativeDocumentMoniker": "FormAguarde.cs",
               "ToolTip": "C:\\Estudo\\Futtage\\FormAguarde.cs [Projeto]",
               "RelativeToolTip": "FormAguarde.cs [Projeto]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T00:44:54.374Z",
-              "EditorCaption": " [Projeto]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Resources.resx",
-              "DocumentMoniker": "C:\\Estudo\\Futtage\\Properties\\Resources.resx",
-              "RelativeDocumentMoniker": "Properties\\Resources.resx",
-              "ToolTip": "C:\\Estudo\\Futtage\\Properties\\Resources.resx",
-              "RelativeToolTip": "Properties\\Resources.resx",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2025-07-13T00:31:13.343Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-13T00:44:54.374Z"
             },
             {
               "$type": "Document",
@@ -112,7 +111,7 @@
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "C:\\Estudo\\Futtage\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAswC0AAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAEABAAAAAAAAAAAqwFABAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-12T01:40:53.483Z",
               "EditorCaption": ""

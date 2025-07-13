@@ -121,6 +121,9 @@
   <data name="capa_padrao" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CAPA.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="faz-o-simples" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\faz-o-simples.ico;System.Drawing.Icon, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Football Soccer GIF by happydog" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Football Soccer GIF by happydog.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
