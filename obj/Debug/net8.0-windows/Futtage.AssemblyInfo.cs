@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Futtage")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d06ccceb5948a000bdbf88327504e24b0c855cb6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26fb52b6b7fc73bb6dce91bf4ee2fc2cdf5f9cb6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Futtage")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Futtage")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

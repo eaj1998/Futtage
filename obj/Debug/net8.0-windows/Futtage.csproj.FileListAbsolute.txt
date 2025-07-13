@@ -1,4 +1,5 @@
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\.env
+C:\Estudo\Futtage\bin\Debug\net8.0-windows\bin\Debug\net8.0-windows\ffmpeg.exe
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.exe
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.deps.json
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.runtimeconfig.json

@@ -63,6 +63,16 @@ namespace Futtage.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Byte[].
         /// </summary>
+        internal static byte[] app_icon {
+            get {
+                object obj = ResourceManager.GetObject("app_icon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
         internal static byte[] capa_padrao {
             get {
                 object obj = ResourceManager.GetObject("capa_padrao", resourceCulture);

@@ -19,7 +19,19 @@ namespace Futtage
 
         private void FormAguarde_Load(object sender, EventArgs e)
         {
+            try
+            {
+                byte[] iconBytes = Properties.Resources.app_icon;
 
+                using (MemoryStream ms = new MemoryStream(iconBytes))
+                {
+                    this.Icon = new Icon(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Não foi possível carregar o ícone do aplicativo. Erro: " + ex.Message);
+            }
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

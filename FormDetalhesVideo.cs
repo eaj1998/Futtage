@@ -16,9 +16,33 @@ namespace Futtage
         public string DescricaoDoVideo { get; private set; }
         public bool IsConteudoInfantil { get; private set; }
 
-        public FormDetalhesVideo()
+
+        public FormDetalhesVideo(DateTime dataDeCriacao)
         {
             InitializeComponent();
+            try
+            {
+                byte[] iconBytes = Properties.Resources.app_icon;
+
+                using (MemoryStream ms = new MemoryStream(iconBytes))
+                {
+                    this.Icon = new Icon(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Não foi possível carregar o ícone do aplicativo. Erro: " + ex.Message);
+            }
+
+            txtDescricao.Text = @"Câmera: SJ4000 AIR
+
+Time Meu:
+🧤
+Time Teu:
+🧤";
+
+         this.txtTitulo.Text = $"Viana - {dataDeCriacao.ToString("dd/MM/yyyy")} - ";
+
         }
 
         private void btnOk_Click(object sender, EventArgs e)

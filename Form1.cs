@@ -20,6 +20,19 @@ namespace Futtage
             InitializeComponent();
             AtualizarEstadoDosBotoes();
             btnFazerUpload.Enabled = false;
+            try
+            {
+                byte[] iconBytes = Properties.Resources.app_icon;
+
+                using (MemoryStream ms = new MemoryStream(iconBytes))
+                {
+                    this.Icon = new Icon(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Não foi possível carregar o ícone do aplicativo. Erro: " + ex.Message);
+            }
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -241,8 +254,13 @@ namespace Futtage
                 btnFazerUpload.Enabled = false;
                 return;
             }
+            string primeiroVideoPath = lstArquivosSelecionados.Items[0].ToString() ?? new DateTime().ToString();
 
-            using (FormDetalhesVideo formDetalhes = new FormDetalhesVideo())
+            FileInfo infoDoPrimeiroVideo = new FileInfo(primeiroVideoPath);
+
+            DateTime dataPrimeiroVideo = infoDoPrimeiroVideo.CreationTime;
+
+            using (FormDetalhesVideo formDetalhes = new FormDetalhesVideo(dataPrimeiroVideo))
             {
                 if (formDetalhes.ShowDialog(this) == DialogResult.OK)
                 {

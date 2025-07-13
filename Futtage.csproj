@@ -6,18 +6,20 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Resources\faz-o-simples.ico</ApplicationIcon>
-    <PackageIcon>faz o simples.jpg</PackageIcon>
+    <PackageIcon>faz_o_simples-removebg-preview.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\faz-o-simples.ico" />
+    <Content Include="faz-o-simples.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\Users\UON Edipo\Downloads\faz o simples.jpg">
+    <None Include="..\..\Users\UON Edipo\Downloads\faz_o_simples-removebg-preview.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+    </None>
+    <None Include="bin\Debug\net8.0-windows\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

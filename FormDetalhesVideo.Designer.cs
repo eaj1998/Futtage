@@ -64,6 +64,7 @@
             // 
             // txtDescricao
             // 
+            txtDescricao.AcceptsReturn = true;
             txtDescricao.Location = new Point(42, 99);
             txtDescricao.Multiline = true;
             txtDescricao.Name = "txtDescricao";
