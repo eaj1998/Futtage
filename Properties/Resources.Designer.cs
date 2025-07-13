@@ -61,6 +61,16 @@ namespace Futtage.Properties {
         }
         
         /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] capa_padrao {
+            get {
+                object obj = ResourceManager.GetObject("capa_padrao", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Football_Soccer_GIF_by_happydog {

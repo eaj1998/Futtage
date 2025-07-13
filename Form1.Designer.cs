@@ -38,6 +38,7 @@
             groupBox1 = new GroupBox();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
+            btnFazerUpload = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -149,6 +150,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(btnFazerUpload);
             groupBox3.Controls.Add(btnJuntarVideos);
             groupBox3.Dock = DockStyle.Bottom;
             groupBox3.Location = new Point(0, 353);
@@ -157,6 +159,16 @@
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Passo 3: Ação Final";
+            // 
+            // btnFazerUpload
+            // 
+            btnFazerUpload.Location = new Point(141, 51);
+            btnFazerUpload.Name = "btnFazerUpload";
+            btnFazerUpload.Size = new Size(659, 23);
+            btnFazerUpload.TabIndex = 3;
+            btnFazerUpload.Text = "Fazer Upload para o YouTube";
+            btnFazerUpload.UseVisualStyleBackColor = true;
+            btnFazerUpload.Click += btnFazerUpload_Click;
             // 
             // Form1
             // 
@@ -186,5 +198,10 @@
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        }
+        private Button btnFazerUpload;
     }
 }
