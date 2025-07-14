@@ -1,10 +1,6 @@
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\.env
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\bin\Debug\net8.0-windows\ffmpeg.exe
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.exe
-C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.deps.json
-C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.runtimeconfig.json
-C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.dll
-C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.pdb
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\DotNetEnv.dll
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Google.Apis.dll
 C:\Estudo\Futtage\bin\Debug\net8.0-windows\Google.Apis.Auth.dll
@@ -32,5 +28,9 @@ C:\Estudo\Futtage\obj\Debug\net8.0-windows\Futtage.csproj.Up2Date
 C:\Estudo\Futtage\obj\Debug\net8.0-windows\Futtage.dll
 C:\Estudo\Futtage\obj\Debug\net8.0-windows\refint\Futtage.dll
 C:\Estudo\Futtage\obj\Debug\net8.0-windows\Futtage.pdb
+C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.deps.json
+C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.runtimeconfig.json
+C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.dll
+C:\Estudo\Futtage\bin\Debug\net8.0-windows\Futtage.pdb
 C:\Estudo\Futtage\obj\Debug\net8.0-windows\Futtage.genruntimeconfig.cache
 C:\Estudo\Futtage\obj\Debug\net8.0-windows\ref\Futtage.dll

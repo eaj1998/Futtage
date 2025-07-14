@@ -10,11 +10,19 @@ namespace Futtage
 {
     public partial class Form1 : Form
     {
-        private string? caminhoDoVideoPronto = null;
+        private string? caminhoCapaPersonalizada = null;
+        private string? caminhoVideoJuntado = null;
+        private string? caminhoVideoFinal = null;
+
+        private bool juncaoConcluida = false;
+
         private FormAguarde formAguardeAtual;
         private long totalBytesUpload;
-
         private YouTubeService youtubeService;
+
+        private bool passo1Completo = false;
+        private bool passo2Completo = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -40,30 +48,30 @@ namespace Futtage
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSelecionarArquivo_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Multiselect = true;
-            openFileDialog1.Filter = "Arquivos de Vídeo MP4 (*.mp4)|*.mp4|Todos os arquivos (*.*)|*.*";
-            openFileDialog1.Title = "Selecione os vídeos";
-
-            DialogResult result = openFileDialog1.ShowDialog();
-
-            if (result == DialogResult.OK)
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
-                lstArquivosSelecionados.Items.Clear();
+                Multiselect = true,
+                Filter = "Arquivos de Vídeo MP4 (*.mp4)|*.mp4|Todos os arquivos (*.*)|*.*",
+                Title = "Selecione os vídeos para juntar"
+            };
 
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
                 string[] arquivosSelecionados = openFileDialog1.FileNames;
-
                 var infosDeArquivos = arquivosSelecionados.Select(caminho => new FileInfo(caminho));
-
                 var arquivosOrdenados = infosDeArquivos.OrderBy(f => f.CreationTime);
 
+                lstArquivosSelecionados.Items.Clear();
                 foreach (var arquivoInfo in arquivosOrdenados)
                 {
                     lstArquivosSelecionados.Items.Add(arquivoInfo.FullName);
                 }
 
-                //MessageBox.Show(openFileDialog1.FileNames.Length.ToString() + " arquivo(s) selecionado(s) e ordenado(s) por data!", "Sucesso");
+                juncaoConcluida = false;
+                caminhoVideoJuntado = null;
+                caminhoVideoFinal = null;
             }
 
             AtualizarEstadoDosBotoes();
@@ -71,97 +79,135 @@ namespace Futtage
 
         private async void btnJuntarVideos_Click(object sender, EventArgs e)
         {
-            if (lstArquivosSelecionados.Items.Count < 2)
-            {
-                MessageBox.Show("Por favor, selecione pelo menos dois arquivos de vídeo para juntar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             var listaDeArquivos = new System.Text.StringBuilder();
             foreach (var item in lstArquivosSelecionados.Items)
             {
-                string caminhoCorrigido = item.ToString().Replace('\\', '/');
-                listaDeArquivos.AppendLine($"file '{caminhoCorrigido}'");
+                listaDeArquivos.AppendLine($"file '{item.ToString().Replace('\\', '/')}'");
             }
 
-            string caminhoDoArquivoLista = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mylist.txt");
-            System.IO.File.WriteAllText(caminhoDoArquivoLista, listaDeArquivos.ToString());
+            string caminhoDoArquivoLista = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mylist.txt");
+            File.WriteAllText(caminhoDoArquivoLista, listaDeArquivos.ToString());
 
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Filter = "Vídeo MP4 (*.mp4)|*.mp4";
-            saveDialog.Title = "Salvar vídeo final como...";
-            saveDialog.FileName = "video_final.mp4";
-
-            if (saveDialog.ShowDialog() == DialogResult.OK)
+            SaveFileDialog saveDialog = new SaveFileDialog
             {
-                this.caminhoDoVideoPronto = null;
-                btnFazerUpload.Enabled = false;
-                FormAguarde formAguarde = new FormAguarde();
+                Filter = "Vídeo MP4 (*.mp4)|*.mp4",
+                Title = "Salvar vídeo juntado como...",
+                FileName = "video_juntado.mp4"
+            };
+
+            if (saveDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                this.formAguardeAtual = new FormAguarde();
+                this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(false); // Modo genérico, sem barra de progresso
+                this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
+                int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
+                int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
+                this.formAguardeAtual.Location = new Point(startX, startY);
+                this.formAguardeAtual.Show(this);
 
                 try
                 {
-
-                    formAguarde.StartPosition = FormStartPosition.Manual;
-
-                    int startX = this.Location.X + (this.Width - formAguarde.Width) / 2;
-                    int startY = this.Location.Y + (this.Height - formAguarde.Height) / 2;
-
-                    formAguarde.Location = new Point(startX, startY);
-                    formAguarde.ConfigurarVisibilidadeDaBarra(false);
-                    formAguarde.Show(this);
-
-                    string caminhoDoVideoFinal = saveDialog.FileName;
-                    string comando = $"-y -f concat -safe 0 -i \"{caminhoDoArquivoLista}\" -c copy \"{caminhoDoVideoFinal}\"";
-
-                    var processo = new System.Diagnostics.Process();
-                    processo.StartInfo.FileName = "ffmpeg.exe";
-                    processo.StartInfo.Arguments = comando;
-                    processo.StartInfo.CreateNoWindow = true;
-                    processo.StartInfo.UseShellExecute = false;
-                    processo.StartInfo.RedirectStandardOutput = true;
-                    processo.StartInfo.RedirectStandardError = true;
-
-                    processo.Start();
-
-                    var outputTask = processo.StandardOutput.ReadToEndAsync();
-                    var errorTask = processo.StandardError.ReadToEndAsync();
-
-                    await processo.WaitForExitAsync();
-
-                    formAguarde.Close();
-
-                    string output = await outputTask;
-                    string error = await errorTask;
-
-                    if (processo.ExitCode == 0)
+                    await Task.Run(() =>
                     {
-                        MessageBox.Show($"Vídeo salvo com sucesso em:\n{caminhoDoVideoFinal}", "Sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.caminhoDoVideoPronto = caminhoDoVideoFinal;
-                        btnFazerUpload.Enabled = true;
-                    }
-                    else
-                    {
-                        MessageBox.Show("O FFmpeg encontrou um erro durante a execução.\n\n" +
-                                        "Mensagem de Erro:\n" + error,
-                                        "Erro do FFmpeg", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                        string caminhoDoVideoSaida = saveDialog.FileName;
+                        string comando = $"-y -f concat -safe 0 -i \"{caminhoDoArquivoLista}\" -c copy \"{caminhoDoVideoSaida}\"";
+                        var startInfo = new System.Diagnostics.ProcessStartInfo("ffmpeg.exe", comando)
+                        {
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+                        using (var process = System.Diagnostics.Process.Start(startInfo))
+                        {
+                            process.WaitForExit();
+                        }
+                    });
+
+                    MessageBox.Show("Vídeos juntados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    this.caminhoVideoJuntado = saveDialog.FileName;
+                    this.caminhoVideoFinal = this.caminhoVideoJuntado;
+                    this.juncaoConcluida = true;
+
+                    tabControlPrincipal.SelectedTab = tabPageCorte;
                 }
                 catch (Exception ex)
                 {
-                    if (formAguarde != null && !formAguarde.IsDisposed)
-                    {
-                        formAguarde.Close();
-                    }
-                    MessageBox.Show("Ocorreu um erro CRÍTICO.\n\nErro: " + ex.Message, "Erro de Execução", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Erro ao juntar os vídeos: " + ex.Message, "Erro");
                 }
                 finally
                 {
-                    if (System.IO.File.Exists(caminhoDoArquivoLista))
-                    {
-                        System.IO.File.Delete(caminhoDoArquivoLista);
-                    }
+                    this.formAguardeAtual.Close();
+                    if (File.Exists(caminhoDoArquivoLista)) File.Delete(caminhoDoArquivoLista);
                 }
             }
+        }
+        private async void btnCortarVideo_Click(object sender, EventArgs e)
+        {
+            string videoDeEntrada = this.caminhoVideoJuntado;
+            string tempoInicio = txtInicioCorte.Text;
+            string tempoFim = txtFimCorte.Text;
+
+            if (string.IsNullOrEmpty(tempoInicio) || string.IsNullOrEmpty(tempoFim))
+            {
+                MessageBox.Show("Por favor, preencha os tempos de início e fim.", "Aviso");
+                return;
+            }
+
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                Filter = "Vídeo MP4 (*.mp4)|*.mp4",
+                FileName = Path.GetFileNameWithoutExtension(videoDeEntrada) + "_cortado.mp4"
+            };
+
+            if (saveDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string videoDeSaida = saveDialog.FileName;
+                string comando = $"-ss {tempoInicio} -i \"{videoDeEntrada}\" -to {tempoFim} -c copy \"{videoDeSaida}\"";
+
+                this.formAguardeAtual = new FormAguarde();
+                this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(false);
+                this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
+                int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
+                int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
+                this.formAguardeAtual.Location = new Point(startX, startY);
+                this.formAguardeAtual.Show(this);
+
+                try
+                {
+                    await Task.Run(() =>
+                    {
+                        var startInfo = new System.Diagnostics.ProcessStartInfo("ffmpeg.exe", comando)
+                        {
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+                        using (var process = System.Diagnostics.Process.Start(startInfo))
+                        {
+                            process.WaitForExit();
+                        }
+                    });
+
+                    MessageBox.Show("Vídeo cortado com sucesso!", "Sucesso");
+
+                    this.caminhoVideoFinal = videoDeSaida;
+
+                    tabControlPrincipal.SelectedTab = tabPageCapa;
+                    btnFazerUpload.Enabled = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro ao cortar o vídeo: " + ex.Message, "Erro");
+                }
+                finally
+                {
+                    this.formAguardeAtual.Close();
+                }
+            }
+        }
+        private void btnPularCorte_Click(object sender, EventArgs e)
+        {
+            tabControlPrincipal.SelectedTab = tabPageUpload;
+            btnFazerUpload.Enabled = true;
         }
 
         private void btnMoverCima_Click(object sender, EventArgs e)
@@ -170,11 +216,8 @@ namespace Futtage
             {
                 object itemSelecionado = lstArquivosSelecionados.SelectedItem;
                 int indiceSelecionado = lstArquivosSelecionados.SelectedIndex;
-
                 lstArquivosSelecionados.Items.RemoveAt(indiceSelecionado);
-
                 lstArquivosSelecionados.Items.Insert(indiceSelecionado - 1, itemSelecionado);
-
                 lstArquivosSelecionados.SelectedIndex = indiceSelecionado - 1;
             }
         }
@@ -185,11 +228,8 @@ namespace Futtage
             {
                 object itemSelecionado = lstArquivosSelecionados.SelectedItem;
                 int indiceSelecionado = lstArquivosSelecionados.SelectedIndex;
-
                 lstArquivosSelecionados.Items.RemoveAt(indiceSelecionado);
-
                 lstArquivosSelecionados.Items.Insert(indiceSelecionado + 1, itemSelecionado);
-
                 lstArquivosSelecionados.SelectedIndex = indiceSelecionado + 1;
             }
         }
@@ -198,22 +238,9 @@ namespace Futtage
         {
             if (lstArquivosSelecionados.SelectedItem != null)
             {
-                int indiceSelecionado = lstArquivosSelecionados.SelectedIndex;
-
-                lstArquivosSelecionados.Items.RemoveAt(indiceSelecionado);
-
-                if (lstArquivosSelecionados.Items.Count > 0)
-                {
-                    if (indiceSelecionado >= lstArquivosSelecionados.Items.Count)
-                    {
-                        lstArquivosSelecionados.SelectedIndex = lstArquivosSelecionados.Items.Count - 1;
-                    }
-                    else
-                    {
-                        lstArquivosSelecionados.SelectedIndex = indiceSelecionado;
-                    }
-                }
+                lstArquivosSelecionados.Items.Remove(lstArquivosSelecionados.SelectedItem);
             }
+            AtualizarEstadoDosBotoes();
         }
 
         private void lstArquivosSelecionados_SelectedIndexChanged(object sender, EventArgs e)
@@ -223,44 +250,32 @@ namespace Futtage
 
         private void AtualizarEstadoDosBotoes()
         {
-            if (btnFazerUpload.Enabled)
+            if (juncaoConcluida)
             {
-                btnFazerUpload.Enabled = false;
-                this.caminhoDoVideoPronto = null;
+                juncaoConcluida = false;
+                caminhoVideoJuntado = null;
+                caminhoVideoFinal = null;
             }
 
             btnJuntarVideos.Enabled = (lstArquivosSelecionados.Items.Count >= 2);
 
             bool itemSelecionado = (lstArquivosSelecionados.SelectedIndex != -1);
-
             btnExcluirItem.Enabled = itemSelecionado;
-
             btnMoverCima.Enabled = (itemSelecionado && lstArquivosSelecionados.SelectedIndex > 0);
-
             btnMoverBaixo.Enabled = (itemSelecionado && lstArquivosSelecionados.SelectedIndex < lstArquivosSelecionados.Items.Count - 1);
-
-            btnMoverBaixo.Enabled = (itemSelecionado && lstArquivosSelecionados.SelectedIndex < lstArquivosSelecionados.Items.Count - 1);
-
-            
         }
 
         private async void btnFazerUpload_Click(object sender, EventArgs e)
         {
-            string? caminhoDoVideo = this.caminhoDoVideoPronto;
+            string? caminhoDoVideo = this.caminhoVideoFinal;
 
             if (string.IsNullOrEmpty(caminhoDoVideo) || !File.Exists(caminhoDoVideo))
             {
-                MessageBox.Show("Nenhum vídeo pronto para upload foi encontrado ou o arquivo foi movido.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                btnFazerUpload.Enabled = false;
+                MessageBox.Show("Nenhum vídeo final foi encontrado para o upload.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            string primeiroVideoPath = lstArquivosSelecionados.Items[0].ToString() ?? new DateTime().ToString();
 
-            FileInfo infoDoPrimeiroVideo = new FileInfo(primeiroVideoPath);
-
-            DateTime dataPrimeiroVideo = infoDoPrimeiroVideo.CreationTime;
-
-            using (FormDetalhesVideo formDetalhes = new FormDetalhesVideo(dataPrimeiroVideo))
+            using (FormDetalhesVideo formDetalhes = new FormDetalhesVideo(new FileInfo(caminhoDoVideo).CreationTime))
             {
                 if (formDetalhes.ShowDialog(this) == DialogResult.OK)
                 {
@@ -269,11 +284,11 @@ namespace Futtage
                     bool paraCriancas = formDetalhes.IsConteudoInfantil;
 
                     this.formAguardeAtual = new FormAguarde();
+                    this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(true);
                     this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
                     int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
                     int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
                     this.formAguardeAtual.Location = new Point(startX, startY);
-                    this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(true);
                     this.formAguardeAtual.Show(this);
 
                     try
@@ -296,17 +311,8 @@ namespace Futtage
                             });
 
                             var video = new Video();
-                            video.Snippet = new VideoSnippet
-                            {
-                                Title = titulo,
-                                Description = descricao,
-                                CategoryId = "22" 
-                            };
-                            video.Status = new VideoStatus
-                            {
-                                PrivacyStatus = "public",
-                                SelfDeclaredMadeForKids = paraCriancas
-                            };
+                            video.Snippet = new VideoSnippet { Title = titulo, Description = descricao, CategoryId = "22" };
+                            video.Status = new VideoStatus { PrivacyStatus = "public", SelfDeclaredMadeForKids = paraCriancas };
 
                             this.totalBytesUpload = new FileInfo(caminhoDoVideo).Length;
 
@@ -315,7 +321,6 @@ namespace Futtage
                                 var videosInsertRequest = this.youtubeService.Videos.Insert(video, "snippet,status", fileStream, "video/*");
                                 videosInsertRequest.ProgressChanged += OnProgressChanged;
                                 videosInsertRequest.ResponseReceived += OnResponseReceived;
-
                                 await videosInsertRequest.UploadAsync();
                             }
                         });
@@ -332,52 +337,135 @@ namespace Futtage
                         }
                     }
                 }
-                else
-                {
-                    MessageBox.Show("Upload cancelado pelo usuário.", "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
             }
         }
+
         void OnProgressChanged(IUploadProgress progress)
         {
-            switch (progress.Status)
+            if (progress.Status == UploadStatus.Uploading)
             {
-                case UploadStatus.Uploading:
-                    if (this.formAguardeAtual != null && !this.formAguardeAtual.IsDisposed)
+                if (this.formAguardeAtual != null && !this.formAguardeAtual.IsDisposed)
+                {
+                    if (this.totalBytesUpload > 0)
                     {
                         int porcentagem = (int)(((double)progress.BytesSent / this.totalBytesUpload) * 100);
-
                         this.formAguardeAtual.AtualizarProgresso(porcentagem);
                     }
-                    break;
-                case UploadStatus.Failed:
-                    MessageBox.Show($"Ocorreu um erro durante o upload: {progress.Exception}");
-                    break;
+                }
             }
         }
 
         private async void OnResponseReceived(Video video)
         {
-            MessageBox.Show($"Upload do VÍDEO concluído! ID: {video.Id}", "Sucesso - Etapa 1/2", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Upload do VÍDEO concluído! ID: {video.Id}", "Sucesso - Etapa 1/2");
 
             try
             {
-                MessageBox.Show("Iniciando upload da capa padrão...", "Etapa 2/2", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
-                using (var stream = new MemoryStream(Properties.Resources.capa_padrao))
+                MessageBox.Show("Iniciando upload da capa...", "Etapa 2/2", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+                using (Stream stream = GetThumbnailStream())
                 {
                     var thumbnailsSetRequest = this.youtubeService.Thumbnails.Set(video.Id, stream, "image/png");
                     await thumbnailsSetRequest.UploadAsync();
                 }
 
-                MessageBox.Show("Capa personalizada enviada com sucesso!", "Sucesso Final!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Capa enviada com sucesso!", "Sucesso Final!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Falha ao enviar a capa personalizada.\n\n" +
-                                "Possível Causa: O canal do YouTube não é verificado ou o recurso da imagem não foi encontrado.\n" +
-                                "Erro Detalhado: " + ex.Message, "Erro na Capa", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Falha ao enviar a capa: " + ex.Message, "Erro na Capa", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (e.TabPageIndex < tabControlPrincipal.SelectedIndex) return;
+
+            if (e.TabPage == tabPageJuntar && lstArquivosSelecionados.Items.Count < 2)
+            {
+                e.Cancel = true;
+            }
+            else if (e.TabPage == tabPageCorte && !juncaoConcluida)
+            {
+                e.Cancel = true;
+            }
+            else if (e.TabPage == tabPageUpload && string.IsNullOrEmpty(caminhoVideoFinal))
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void btnVoltarCorte_Click(object sender, EventArgs e)
+        {
+            tabControlPrincipal.SelectedTab = tabPageCorte;
+        }
+
+        private void btnProximoPasso1_Click(object sender, EventArgs e)
+        {
+            tabControlPrincipal.SelectedTab = tabPageJuntar;
+        }
+
+        private void btnVoltarPasso1_Click(object sender, EventArgs e)
+        {
+            tabControlPrincipal.SelectedTab = tabPageSelecao;
+        }
+
+        private void tabPageCapa_Enter(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(caminhoCapaPersonalizada))
+            {
+                try
+                {
+                    byte[] imageBytes = Properties.Resources.capa_padrao;
+
+                    using (MemoryStream ms = new MemoryStream(imageBytes))
+                    {
+                        pictureBoxCapa.Image = Image.FromStream(ms);
+                    }
+
+                    lblCaminhoCapa.Text = "Usando capa padrão do aplicativo.";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Não foi possível carregar a imagem de capa padrão. Erro: " + ex.Message);
+                    pictureBoxCapa.Image = null;
+                }
+            }
+        }
+
+        private void btnSelecionarCapa_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialogCapa = new OpenFileDialog
+            {
+                Filter = "Arquivos de Imagem (*.jpg; *.jpeg; *.png)|*.jpg;*.jpeg;*.png",
+                Title = "Selecione uma nova capa"
+            };
+
+            if (openFileDialogCapa.ShowDialog() == DialogResult.OK)
+            {
+                this.caminhoCapaPersonalizada = openFileDialogCapa.FileName;
+
+                pictureBoxCapa.Image = Image.FromFile(this.caminhoCapaPersonalizada);
+                lblCaminhoCapa.Text = this.caminhoCapaPersonalizada;
+            }
+        }
+
+        private Stream GetThumbnailStream()
+        {
+            if (!string.IsNullOrEmpty(caminhoCapaPersonalizada) && File.Exists(caminhoCapaPersonalizada))
+            {
+                return new FileStream(caminhoCapaPersonalizada, FileMode.Open, FileAccess.Read);
+            }
+            else
+            {
+                return new MemoryStream(Properties.Resources.capa_padrao);
+            }
+        }
+
+        private void btnPulaPassoFinal_Click(object sender, EventArgs e)
+        {
+            tabControlPrincipal.SelectedTab = tabPageUpload;
         }
     }
 }

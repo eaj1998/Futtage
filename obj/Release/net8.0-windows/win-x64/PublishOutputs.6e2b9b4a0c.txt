@@ -1,0 +1,9 @@
+C:\Estudo\Futtage-publicacao\Futtage.pdb
+C:\Estudo\Futtage-publicacao\.env
+C:\Estudo\Futtage-publicacao\bin\Debug\net8.0-windows\ffmpeg.exe
+C:\Estudo\Futtage-publicacao\D3DCompiler_47_cor3.dll
+C:\Estudo\Futtage-publicacao\PenImc_cor3.dll
+C:\Estudo\Futtage-publicacao\PresentationNative_cor3.dll
+C:\Estudo\Futtage-publicacao\vcruntime140_cor3.dll
+C:\Estudo\Futtage-publicacao\wpfgfx_cor3.dll
+C:\Estudo\Futtage-publicacao\Futtage.exe

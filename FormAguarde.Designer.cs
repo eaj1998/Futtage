@@ -71,9 +71,9 @@
             lbProcessandoVideos.AutoSize = true;
             lbProcessandoVideos.Location = new Point(78, 240);
             lbProcessandoVideos.Name = "lbProcessandoVideos";
-            lbProcessandoVideos.Size = new Size(220, 15);
+            lbProcessandoVideos.Size = new Size(215, 15);
             lbProcessandoVideos.TabIndex = 3;
-            lbProcessandoVideos.Text = "Processando vídeos, por favor aguarde...";
+            lbProcessandoVideos.Text = "Processando vídeo, por favor aguarde...";
             // 
             // lbYoutube
             // 

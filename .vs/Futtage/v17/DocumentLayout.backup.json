@@ -3,24 +3,20 @@
   "WorkspaceRootPath": "C:\\Estudo\\Futtage\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\formdetalhesvideo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formdetalhesvideo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|C:\\Estudo\\Futtage\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\formdetalhesvideo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formdetalhesvideo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:formaguarde.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|c:\\estudo\\futtage\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A9D8995-C6FF-4280-9D6B-996EB40279CE}|Futtage.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,65 +54,51 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "FormDetalhesVideo.cs [Projeto]",
-              "DocumentMoniker": "C:\\Estudo\\Futtage\\FormDetalhesVideo.cs",
-              "RelativeDocumentMoniker": "FormDetalhesVideo.cs",
-              "ToolTip": "C:\\Estudo\\Futtage\\FormDetalhesVideo.cs [Projeto]",
-              "RelativeToolTip": "FormDetalhesVideo.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T19:18:43.681Z",
-              "EditorCaption": " [Projeto]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "FormDetalhesVideo.cs",
-              "DocumentMoniker": "C:\\Estudo\\Futtage\\FormDetalhesVideo.cs",
-              "RelativeDocumentMoniker": "FormDetalhesVideo.cs",
-              "ToolTip": "C:\\Estudo\\Futtage\\FormDetalhesVideo.cs",
-              "RelativeToolTip": "FormDetalhesVideo.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAwwCYAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T19:11:28.744Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "C:\\Estudo\\Futtage\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "C:\\Estudo\\Futtage\\Form1.cs [Design]",
+              "RelativeToolTip": "Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-14T17:02:14.037Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Estudo\\Futtage\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "Form1.Designer.cs",
+              "ToolTip": "C:\\Estudo\\Futtage\\Form1.Designer.cs",
+              "RelativeToolTip": "Form1.Designer.cs",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAvwGIAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-14T16:44:29.922Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "FormAguarde.cs",
               "DocumentMoniker": "C:\\Estudo\\Futtage\\FormAguarde.cs",
               "RelativeDocumentMoniker": "FormAguarde.cs",
               "ToolTip": "C:\\Estudo\\Futtage\\FormAguarde.cs",
               "RelativeToolTip": "FormAguarde.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAQwCEAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwEsAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T19:11:15.936Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-14T16:13:05.195Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "FormAguarde.cs [Projeto]",
-              "DocumentMoniker": "C:\\Estudo\\Futtage\\FormAguarde.cs",
-              "RelativeDocumentMoniker": "FormAguarde.cs",
-              "ToolTip": "C:\\Estudo\\Futtage\\FormAguarde.cs [Projeto]",
-              "RelativeToolTip": "FormAguarde.cs [Projeto]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T19:10:27.016Z",
-              "EditorCaption": " [Projeto]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Estudo\\Futtage\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "C:\\Estudo\\Futtage\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAAOEAAAAAAAAAAAAUwAYBAABJAAAAAAAAAA==",
+              "ViewState": "AgIAAFMBAAAAAAAAAAAwwHIBAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T19:07:22.861Z",
+              "WhenOpened": "2025-07-13T20:09:47.798Z",
               "EditorCaption": ""
             }
           ]
