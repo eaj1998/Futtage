@@ -1,15 +1,18 @@
-# 🎥 Futtage - Concatenação e Upload de Vídeos para YouTube
+# 🎥 Futtage - Concatenação, Corte e Upload de Vídeos para YouTube
 
-Futtage é uma aplicação desktop desenvolvida em C# (.NET 8) que permite concatenar múltiplos vídeos MP4 e fazer upload direto para o YouTube com uma interface gráfica intuitiva.
+Futtage é uma aplicação desktop desenvolvida em C# (.NET 8) que permite concatenar, cortar e fazer upload de vídeos MP4 para o YouTube, com interface gráfica intuitiva e suporte a thumbnail personalizada.
 
 ## ✨ Funcionalidades
 
 - **Concatenação de Vídeos**: Junte múltiplos arquivos MP4 em um único vídeo
 - **Ordenação Inteligente**: Os vídeos são automaticamente ordenados por data de criação
 - **Gerenciamento de Lista**: Adicione, remova e reordene vídeos na lista de concatenação
+- **Corte de Vídeo**: Corte o vídeo concatenado selecionando tempo de início e fim
 - **Upload para YouTube**: Upload direto para o YouTube com metadados personalizados
-- **Thumbnail Automático**: Aplicação automática de thumbnail personalizado
-- **Interface Intuitiva**: Interface gráfica amigável com barras de progresso
+- **Thumbnail Personalizada**: Selecione uma imagem personalizada ou use a padrão para o vídeo
+- **Barra de Progresso**: Acompanhe o progresso do upload e da concatenação
+- **Navegação por Etapas**: Interface baseada em abas para cada etapa do fluxo (seleção, junção, corte, thumbnail, upload)
+- **Interface Intuitiva**: Interface gráfica amigável com feedback visual e mensagens de sucesso/erro
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -48,23 +51,37 @@ YOUTUBE_CLIENT_SECRET=seu_client_secret_aqui
 ## 🚀 Como Usar
 
 ### 1. Selecionar Vídeos
-- Clique em "Selecionar Vídeos" para escolher os arquivos MP4
+- Clique em "Selecionar Arquivo..." para escolher os arquivos MP4
 - Os vídeos serão automaticamente ordenados por data de criação
 - Use os botões de seta para reordenar manualmente se necessário
+- Remova arquivos indesejados com o botão "X"
+- Avance para a próxima etapa com "Próximo Passo"
 
 ### 2. Concatenar Vídeos
 - Selecione pelo menos 2 vídeos
 - Clique em "Juntar Vídeos"
 - Escolha o local para salvar o vídeo final
 - Aguarde o processamento com FFmpeg
+- Avance para a etapa de corte automaticamente
 
-### 3. Fazer Upload para YouTube
-- Após a concatenação, clique em "Fazer Upload"
+### 3. Cortar Vídeo (Opcional)
+- Defina o tempo de início e fim para cortar o vídeo concatenado
+- Clique em "Cortar Vídeo" para salvar uma nova versão cortada
+- Ou clique em "Pular Corte" para manter o vídeo inteiro
+
+### 4. Selecionar Thumbnail
+- Por padrão, uma thumbnail padrão será usada
+- Clique em "Selecionar Capa" para escolher uma imagem personalizada (JPG, JPEG, PNG)
+- Avance para a etapa de upload
+
+### 5. Fazer Upload para YouTube
+- Clique em "Fazer Upload"
 - Preencha os detalhes do vídeo:
   - Título (obrigatório)
   - Descrição (opcional)
   - Marque se é conteúdo infantil
-- Aguarde o upload e a aplicação da thumbnail
+- Acompanhe o progresso do upload pela barra de progresso
+- A thumbnail será aplicada automaticamente após o upload
 
 ## 📁 Estrutura do Projeto
 
@@ -72,10 +89,10 @@ YOUTUBE_CLIENT_SECRET=seu_client_secret_aqui
 Futtage/
 ├── Form1.cs                 # Formulário principal
 ├── FormDetalhesVideo.cs     # Formulário de detalhes do vídeo
-├── FormAguarde.cs          # Formulário de progresso
-├── Program.cs              # Ponto de entrada da aplicação
-├── Resources/              # Recursos (imagens, thumbnails)
-└── bin/Debug/              # Arquivos compilados e dependências
+├── FormAguarde.cs           # Formulário de progresso
+├── Program.cs               # Ponto de entrada da aplicação
+├── Resources/               # Recursos (imagens, thumbnails)
+└── bin/Debug/               # Arquivos compilados e dependências
 ```
 
 ## 🔧 Compilação
@@ -92,10 +109,11 @@ Futtage/
 
 ## 📝 Notas Importantes
 
-- **FFmpeg**: O projeto inclui o FFmpeg executável necessário para concatenação
+- **FFmpeg**: O projeto inclui o FFmpeg executável necessário para concatenação e corte
 - **Autenticação**: Na primeira execução, será necessário autenticar com sua conta Google
-- **Thumbnail**: O projeto inclui uma thumbnail padrão que será aplicada automaticamente
-- **Limitações**: Apenas arquivos MP4 são suportados para concatenação
+- **Thumbnail**: O projeto inclui uma thumbnail padrão, mas permite selecionar uma personalizada
+- **Limitações**: Apenas arquivos MP4 são suportados para concatenação e corte
+- **Fluxo em Etapas**: A navegação é feita por abas, guiando o usuário por cada etapa do processo
 
 ## 🐛 Solução de Problemas
 
@@ -104,7 +122,7 @@ Futtage/
 - Certifique-se de que a API do YouTube Data v3 está habilitada
 - Verifique se o canal tem permissões para upload
 
-### Erro de Concatenação
+### Erro de Concatenação ou Corte
 - Certifique-se de que todos os vídeos são MP4 válidos
 - Verifique se há espaço suficiente no disco
 - Confirme se o FFmpeg está presente na pasta bin
