@@ -354,12 +354,6 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 - **.NET Community**: Pelo framework e ferramentas
 - **Contribuidores**: Todos que ajudaram no desenvolvimento
 
-## 📞 Suporte
-
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/futtage/issues)
-- **Email**: [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
-- **Documentação**: [Wiki do Projeto](https://github.com/seu-usuario/futtage/wiki)
-
 ---
 
 **Desenvolvido com ❤️ para facilitar a criação de conteúdo no YouTube**
