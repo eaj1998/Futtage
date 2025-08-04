@@ -27,6 +27,7 @@ namespace Futtage
         {
             InitializeComponent();
             AtualizarEstadoDosBotoes();
+            ResetarStatusLoginUI();
             btnFazerUpload.Enabled = false;
             try
             {
@@ -41,11 +42,6 @@ namespace Futtage
             {
                 MessageBox.Show("Não foi possível carregar o ícone do aplicativo. Erro: " + ex.Message);
             }
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void btnSelecionarArquivo_Click(object sender, EventArgs e)
@@ -85,7 +81,7 @@ namespace Futtage
                 listaDeArquivos.AppendLine($"file '{item.ToString().Replace('\\', '/')}'");
             }
 
-            string caminhoDoArquivoLista = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mylist.txt");
+            string caminhoDoArquivoLista = Path.Combine(Path.GetTempPath(), "mylist.txt");
             File.WriteAllText(caminhoDoArquivoLista, listaDeArquivos.ToString());
 
             SaveFileDialog saveDialog = new SaveFileDialog
@@ -99,10 +95,7 @@ namespace Futtage
             {
                 this.formAguardeAtual = new FormAguarde();
                 this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(false); // Modo genérico, sem barra de progresso
-                this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
-                int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
-                int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
-                this.formAguardeAtual.Location = new Point(startX, startY);
+                ReposicionarForm();
                 this.formAguardeAtual.Show(this);
 
                 try
@@ -141,6 +134,15 @@ namespace Futtage
                 }
             }
         }
+
+        private void ReposicionarForm()
+        {
+            this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
+            int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
+            int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
+            this.formAguardeAtual.Location = new Point(startX, startY);
+        }
+
         private async void btnCortarVideo_Click(object sender, EventArgs e)
         {
             string videoDeEntrada = this.caminhoVideoJuntado;
@@ -166,10 +168,7 @@ namespace Futtage
 
                 this.formAguardeAtual = new FormAguarde();
                 this.formAguardeAtual.ConfigurarVisibilidadeDaBarra(false);
-                this.formAguardeAtual.StartPosition = FormStartPosition.Manual;
-                int startX = this.Location.X + (this.Width - this.formAguardeAtual.Width) / 2;
-                int startY = this.Location.Y + (this.Height - this.formAguardeAtual.Height) / 2;
-                this.formAguardeAtual.Location = new Point(startX, startY);
+                ReposicionarForm();
                 this.formAguardeAtual.Show(this);
 
                 try
@@ -206,7 +205,7 @@ namespace Futtage
         }
         private void btnPularCorte_Click(object sender, EventArgs e)
         {
-            tabControlPrincipal.SelectedTab = tabPageUpload;
+            tabControlPrincipal.SelectedTab = tabPageCapa;
             btnFazerUpload.Enabled = true;
         }
 
@@ -267,8 +266,14 @@ namespace Futtage
 
         private async void btnFazerUpload_Click(object sender, EventArgs e)
         {
-            string? caminhoDoVideo = this.caminhoVideoFinal;
 
+            if (this.youtubeService == null)
+            {
+                MessageBox.Show("Por favor, faça o login com sua conta do Google no Passo 1 antes de fazer o upload.", "Login Necessário", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string? caminhoDoVideo = this.caminhoVideoFinal;
             if (string.IsNullOrEmpty(caminhoDoVideo) || !File.Exists(caminhoDoVideo))
             {
                 MessageBox.Show("Nenhum vídeo final foi encontrado para o upload.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -295,20 +300,6 @@ namespace Futtage
                     {
                         await Task.Run(async () =>
                         {
-                            DotNetEnv.Env.Load();
-                            var clientSecrets = new ClientSecrets
-                            {
-                                ClientId = Environment.GetEnvironmentVariable("YOUTUBE_CLIENT_ID"),
-                                ClientSecret = Environment.GetEnvironmentVariable("YOUTUBE_CLIENT_SECRET")
-                            };
-                            UserCredential credenciais = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                clientSecrets, new[] { YouTubeService.Scope.YoutubeUpload }, "user", CancellationToken.None);
-
-                            this.youtubeService = new YouTubeService(new BaseClientService.Initializer()
-                            {
-                                HttpClientInitializer = credenciais,
-                                ApplicationName = "Futtage Uploader"
-                            });
 
                             var video = new Video();
                             video.Snippet = new VideoSnippet { Title = titulo, Description = descricao, CategoryId = "22" };
@@ -466,6 +457,133 @@ namespace Futtage
         private void btnPulaPassoFinal_Click(object sender, EventArgs e)
         {
             tabControlPrincipal.SelectedTab = tabPageUpload;
+        }
+
+        private async void btnAutenticacao_Click(object sender, EventArgs e)
+        {
+            if (this.youtubeService != null)
+            {
+                string mensagem = "Você tem certeza que deseja fazer o logout?";
+                if (MessageBox.Show(mensagem, "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+
+                    string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    string tokenParentPath = Path.Combine(appDataPath, "Google.Apis.Auth");
+
+                    string tokenFilePath = Path.Combine(tokenParentPath, "Google.Apis.Auth.OAuth2.Responses.TokenResponse-user");
+
+                    if (File.Exists(tokenFilePath))
+                    {
+                        try
+                        {
+                            File.Delete(tokenFilePath);
+
+                            ResetarStatusLoginUI();
+                            MessageBox.Show("Logout efetuado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Erro ao limpar o cache de login: " + ex.Message, "Erro");
+                        }
+                    }
+                    else
+                    {
+                        ResetarStatusLoginUI();
+                        MessageBox.Show("Você já está desconectado.", "Informação");
+                    }
+                }
+            }
+            else
+            {
+                bool sucesso = await AutenticarAsync();
+                if (sucesso)
+                {
+                    await BuscarEExibirInfoDoCanal();
+                }
+            }
+        }
+
+        private async Task BuscarEExibirInfoDoCanal()
+        {
+            if (this.youtubeService == null) return; 
+
+            try
+            {
+                var channelsRequest = youtubeService.Channels.List("snippet");
+                channelsRequest.Mine = true;
+
+                var channelsResponse = await channelsRequest.ExecuteAsync();
+                var canal = channelsResponse.Items.FirstOrDefault();
+
+                if (canal != null)
+                {
+                    this.Invoke(() => {
+                        AtualizarStatusLoginUI(canal.Snippet.Title, canal.Snippet.Thumbnails.Default__.Url);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erro ao buscar info do canal: " + ex.Message);
+                this.Invoke(() => {
+                    lblContaLogada.Text = "Erro ao buscar";
+                });
+            }
+        }
+        private async Task<bool> AutenticarAsync()
+        {
+            try
+            {
+                DotNetEnv.Env.Load();
+                var clientSecrets = new ClientSecrets
+                {
+                    ClientId = Environment.GetEnvironmentVariable("YOUTUBE_CLIENT_ID"),
+                    ClientSecret = Environment.GetEnvironmentVariable("YOUTUBE_CLIENT_SECRET")
+                };
+
+                UserCredential credenciais = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    clientSecrets, new[] { YouTubeService.Scope.YoutubeUpload, YouTubeService.Scope.YoutubeReadonly }, "user", CancellationToken.None);
+
+                this.youtubeService = new YouTubeService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credenciais,
+                    ApplicationName = "Futtage Uploader"
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha na autenticação: " + ex.Message, "Erro de Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private void AtualizarStatusLoginUI(string nomeCanal, string urlImagemPerfil)
+        {
+            lblContaLogada.Text = nomeCanal;
+            pictureBoxProfile.LoadAsync(urlImagemPerfil);
+            btnAutenticacao.Text = "Logout (Trocar Conta)";
+        }
+
+        private void ResetarStatusLoginUI()
+        {
+            lblContaLogada.Text = "Desconectado";
+            btnAutenticacao.Text = "Login com o Google";
+            this.youtubeService = null;
+            try
+            {
+                byte[] gifBytes = Futtage.Properties.Resources.desconhecido;
+                using (MemoryStream ms = new MemoryStream(gifBytes))
+                {
+                    pictureBoxProfile.Image = Image.FromStream(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                pictureBoxProfile.Image = null;
+                System.Diagnostics.Debug.WriteLine("Erro ao carregar GIF padrão: " + ex.Message);
+            }
         }
     }
 }

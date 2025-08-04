@@ -81,12 +81,22 @@ namespace Futtage.Properties {
         }
         
         /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        ///   Consulta um recurso localizado do tipo System.Byte[].
         /// </summary>
-        internal static System.Drawing.Bitmap Football_Soccer_GIF_by_happydog {
+        internal static byte[] desconhecido {
             get {
-                object obj = ResourceManager.GetObject("Football Soccer GIF by happydog", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("desconhecido", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] loading {
+            get {
+                object obj = ResourceManager.GetObject("loading", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

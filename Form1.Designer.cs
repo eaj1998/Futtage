@@ -32,6 +32,10 @@
             openFileDialog1 = new OpenFileDialog();
             tabControlPrincipal = new TabControl();
             tabPageSelecao = new TabPage();
+            pictureBoxProfile = new PictureBox();
+            lblContaLogada = new Label();
+            label1 = new Label();
+            btnAutenticacao = new Button();
             btnProximoPasso1 = new Button();
             btnExcluirItem = new Button();
             btnMoverCima = new Button();
@@ -56,6 +60,7 @@
             btnFazerUpload = new Button();
             tabControlPrincipal.SuspendLayout();
             tabPageSelecao.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxProfile).BeginInit();
             tabPageJuntar.SuspendLayout();
             tabPageCorte.SuspendLayout();
             tabPageCapa.SuspendLayout();
@@ -99,6 +104,10 @@
             // 
             // tabPageSelecao
             // 
+            tabPageSelecao.Controls.Add(pictureBoxProfile);
+            tabPageSelecao.Controls.Add(lblContaLogada);
+            tabPageSelecao.Controls.Add(label1);
+            tabPageSelecao.Controls.Add(btnAutenticacao);
             tabPageSelecao.Controls.Add(btnProximoPasso1);
             tabPageSelecao.Controls.Add(btnSelecionarArquivo);
             tabPageSelecao.Controls.Add(btnExcluirItem);
@@ -112,6 +121,44 @@
             tabPageSelecao.TabIndex = 0;
             tabPageSelecao.Text = "Passo 1: Seleção e Ordem";
             tabPageSelecao.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxProfile
+            // 
+            pictureBoxProfile.Location = new Point(11, 342);
+            pictureBoxProfile.Name = "pictureBoxProfile";
+            pictureBoxProfile.Size = new Size(31, 35);
+            pictureBoxProfile.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBoxProfile.TabIndex = 10;
+            pictureBoxProfile.TabStop = false;
+            // 
+            // lblContaLogada
+            // 
+            lblContaLogada.AutoSize = true;
+            lblContaLogada.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblContaLogada.Location = new Point(48, 352);
+            lblContaLogada.Name = "lblContaLogada";
+            lblContaLogada.Size = new Size(85, 15);
+            lblContaLogada.TabIndex = 9;
+            lblContaLogada.Text = "Desconhecido";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(11, 324);
+            label1.Name = "label1";
+            label1.Size = new Size(102, 15);
+            label1.TabIndex = 8;
+            label1.Text = "Conta Conectada:";
+            // 
+            // btnAutenticacao
+            // 
+            btnAutenticacao.Location = new Point(11, 391);
+            btnAutenticacao.Name = "btnAutenticacao";
+            btnAutenticacao.Size = new Size(170, 23);
+            btnAutenticacao.TabIndex = 7;
+            btnAutenticacao.Text = "Login com o Google";
+            btnAutenticacao.UseVisualStyleBackColor = true;
+            btnAutenticacao.Click += btnAutenticacao_Click;
             // 
             // btnProximoPasso1
             // 
@@ -153,7 +200,7 @@
             lstArquivosSelecionados.ItemHeight = 15;
             lstArquivosSelecionados.Location = new Point(11, 32);
             lstArquivosSelecionados.Name = "lstArquivosSelecionados";
-            lstArquivosSelecionados.Size = new Size(629, 319);
+            lstArquivosSelecionados.Size = new Size(629, 289);
             lstArquivosSelecionados.TabIndex = 1;
             lstArquivosSelecionados.SelectedIndexChanged += lstArquivosSelecionados_SelectedIndexChanged;
             // 
@@ -356,6 +403,8 @@
             Load += Form1_Load;
             tabControlPrincipal.ResumeLayout(false);
             tabPageSelecao.ResumeLayout(false);
+            tabPageSelecao.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxProfile).EndInit();
             tabPageJuntar.ResumeLayout(false);
             tabPageCorte.ResumeLayout(false);
             tabPageCorte.PerformLayout();
@@ -397,5 +446,9 @@
         private Button btnSelecionarCapa;
         private Label lblCaminhoCapa;
         private Button btnPulaPassoFinal;
+        private Button btnAutenticacao;
+        private Label lblContaLogada;
+        private Label label1;
+        private PictureBox pictureBoxProfile;
     }
 }
