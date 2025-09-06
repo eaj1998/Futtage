@@ -123,6 +123,7 @@
             Text = "Detalhes do Vídeo para Upload";
             ResumeLayout(false);
             PerformLayout();
+            InitializePrivacyControls();
         }
 
         #endregion
