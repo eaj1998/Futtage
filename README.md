@@ -1,131 +1,245 @@
-# FUTTAGE - Editor de Vídeo para YouTube
+FUTTAGE - Video Editor for YouTube
 
-**Versão:** 2.0.0  
-**Plataforma:** Windows (.NET 8.0)
+Version: 2.0.0
+Platform: Windows (.NET 8.0)
+📋 About
 
-## 📋 Sobre
+Futtage is a desktop application for Windows that allows you to concatenate, trim, and upload videos directly to YouTube. Built in C# with a modern interface and complete integration with the YouTube API.
+✨ Key Features
 
-O Futtage é uma aplicação desktop para Windows que permite concatenar, cortar e fazer upload de vídeos diretamente para o YouTube. Desenvolvido em C# com interface moderna e integração completa com a API do YouTube.
+    Video Concatenation: Merge multiple MP4 videos into a single file
+    Video Trimming: Cut videos to specific time ranges
+    YouTube Integration: Direct upload to YouTube with metadata
+    Modern UI: Clean interface with progress tracking
+    Authentication: Secure Google OAuth2 integration
+    Thumbnail Support: Custom thumbnail selection for uploads
+    Error Handling: Robust error management and logging
+    Multiple Formats: Support for MP4, AVI, MOV, MKV, WMV, FLV
 
-## 🏗️ Estrutura do Projeto
+🏗️ Project Structure
 
-```
 Futtage/
-├── Core/                          # Lógica de negócio
-│   ├── Models/                    # Modelos de dados
-│   │   ├── VideoInfo.cs          # Informações do vídeo
-│   │   ├── YoutubeUploadRequest.cs # Requisição de upload
-│   │   ├── UserInfo.cs           # Dados do usuário
-│   │   └── ProcessingProgress.cs # Progresso do processamento
-│   └── Services/                  # Serviços principais
-│       ├── IVideoProcessingService.cs # Interface processamento
-│       ├── VideoProcessingService.cs  # Processamento de vídeo
-│       ├── IYoutubeService.cs         # Interface YouTube
-│       ├── FuttageYouTubeService.cs   # Serviço YouTube
-│       ├── IFileService.cs            # Interface arquivos
-│       └── FileService.cs             # Serviço arquivos
-├── Infrastructure/                # Infraestrutura
-│   ├── Configuration/             # Configurações
-│   ├── Extensions/                # Extensões DI
-│   └── Logging/                   # Sistema de logs
-├── Presentation/                  # Interface do usuário
-│   ├── Views/                     # Formulários
-│   ├── Presenters/                # Lógica de apresentação
-│   └── Common/                    # Componentes UI
-├── Resources/                     # Recursos (imagens, ícones)
-├── Program.cs                     # Ponto de entrada
-├── appsettings.json              # Configurações
-└── ffmpeg.exe                    # FFmpeg para processamento
-```
+├── Core/                          # Business logic layer
+│   ├── Models/                    # Data models
+│   │   ├── VideoInfo.cs          # Video information
+│   │   ├── YoutubeUploadRequest.cs # Upload request model
+│   │   ├── UserInfo.cs           # User data
+│   │   └── ProcessingProgress.cs # Processing progress tracking
+│   └── Services/                  # Core services
+│       ├── IVideoProcessingService.cs # Video processing interface
+│       ├── VideoProcessingService.cs  # Video processing implementation
+│       ├── IYoutubeService.cs         # YouTube service interface
+│       ├── FuttageYouTubeService.cs   # YouTube service implementation
+│       ├── IFileService.cs            # File service interface
+│       └── FileService.cs             # File service implementation
+├── Infrastructure/                # Infrastructure layer
+│   ├── Configuration/             # App configuration
+│   ├── Extensions/                # Dependency injection extensions
+│   └── Logging/                   # Logging system
+├── Presentation/                  # User interface layer
+│   ├── Views/                     # Forms and dialogs
+│   ├── Presenters/                # MVP pattern presenters
+│   └── Common/                    # Shared UI components
+├── Resources/                     # Application resources
+├── Program.cs                     # Application entry point
+├── appsettings.json              # Configuration file
+└── ffmpeg.exe                    # FFmpeg binary for video processing
 
-## 🚀 Como Usar
+🚀 How to Use
+Step 1: Select and Order Videos
 
-#### Concatenar Vídeos
-1. Selecione múltiplos arquivos de vídeo
-2. Configure o nome do arquivo de saída
-3. Clique em "Concatenar"
-4. Aguarde o processamento (barra de progresso)
+    Click "Select Files..." to choose multiple MP4 videos
+    Use the arrow buttons to reorder videos as needed
+    Remove unwanted videos with the X button
+    Login with your Google account for YouTube access
 
-#### Cortar Vídeo
-1. Selecione um arquivo de vídeo
-2. Defina o tempo de início e fim
-3. Configure o nome do arquivo de saída
-4. Clique em "Cortar"
+Step 2: Concatenate Videos
 
-#### Upload para YouTube
-1. Após processar o vídeo, configure:
-   - **Título** do vídeo
-   - **Descrição**
-   - **Thumbnail** (opcional)
-   - **Tags** (opcional)
-   - **Privacidade** (privado/público/não listado)
-2. Clique em "Upload"
-3. Aguarde o upload (barra de progresso)
+    Review your selected videos
+    Click "Join Videos" and choose output location
+    Wait for processing to complete (progress bar will show status)
 
-### 4. Recursos Avançados
-- **Preview do vídeo** antes do processamento
-- **Informações detalhadas** (duração, resolução, tamanho)
-- **Logs detalhados** para debugging
-- **Interface moderna** com animações
-- **Tratamento de erros** robusto
+Step 3: Trim Video (Optional)
 
-## ⚙️ Configuração
+    Set start time in HH:MM:SS format
+    Set end time in HH:MM:SS format
+    Click "Cut" to trim the video, or "Skip Cut" to proceed
 
-### appsettings.json
-```json
+Step 4: Select Thumbnail (Optional)
+
+    A default thumbnail is automatically generated
+    Click "Change Default Cover..." to select a custom image
+    Supported formats: JPG, PNG, BMP
+    Click "Next Step" to continue
+
+Step 5: Upload to YouTube
+
+    Fill in video details:
+        Title: Your video title (up to 100 characters)
+        Description: Video description (up to 5000 characters)
+        Privacy: Choose Private, Unlisted, or Public
+        Child-friendly content: Check if appropriate
+    Click "Upload to YouTube"
+    Wait for upload completion
+
+⚙️ Configuration
+appsettings.json Setup
+
+Create or modify the appsettings.json file in the application directory:
+json
+
 {
   "YouTube": {
-    "ClientId": "seu-client-id",
-    "ClientSecret": "seu-client-secret",
+    "ClientId": "your-google-client-id",
+    "ClientSecret": "your-google-client-secret",
     "ApplicationName": "Futtage"
   },
   "Video": {
     "DefaultQuality": "copy",
     "DeleteTempFiles": true
+  },
+  "UI": {
+    "Theme": "Light",
+    "ShowTooltips": true,
+    "EnableAnimations": true
   }
 }
-```
 
-### Variáveis de Ambiente
-- `FUTTAGE_YOUTUBE_CLIENTID`: Client ID do YouTube
-- `FUTTAGE_YOUTUBE_CLIENTSECRET`: Client Secret do YouTube
+Environment Variables (Alternative)
 
-## 🔧 Requisitos
+You can also configure YouTube credentials via environment variables:
 
-- **Sistema:** Windows 10 64-bit ou superior
-- **Framework:** .NET 8.0 Runtime
-- **FFmpeg:** Incluído no pacote
-- **Internet:** Para upload no YouTube
-- **Conta:** Google/YouTube válida
+    FUTTAGE_YOUTUBE_CLIENTID: Your Google Client ID
+    FUTTAGE_YOUTUBE_CLIENTSECRET: Your Google Client Secret
 
-## 📁 Formatos Suportados
+Google API Setup
 
-- **Entrada:** MP4, AVI, MOV, MKV, WMV, FLV
-- **Saída:** MP4 (H.264)
-- **Thumbnails:** JPG, PNG
+    Go to Google Cloud Console
+    Create a new project or select existing one
+    Enable the YouTube Data API v3
+    Create OAuth 2.0 credentials (Desktop Application)
+    Add your Client ID and Secret to the configuration
 
-## 🐛 Solução de Problemas
+🔧 System Requirements
 
-### FFmpeg não encontrado
-- Verifique se `ffmpeg.exe` está na pasta do aplicativo
-- Baixe FFmpeg em: https://www.gyan.dev/ffmpeg/builds/
+    Operating System: Windows 10 64-bit or higher
+    Framework: .NET 8.0 Runtime
+    Memory: 4 GB RAM minimum, 8 GB recommended
+    Storage: 1 GB free space (more for video processing)
+    FFmpeg: Included with the application
+    Internet: Required for YouTube uploads
+    Google Account: Valid YouTube account for uploads
 
-### Erro de autenticação YouTube
-- Verifique as credenciais no `appsettings.json`
-- Faça logout e login novamente
-- Verifique as permissões da conta
+📁 Supported Formats
+Input Video Formats
 
-### Erro de processamento
-- Verifique se o arquivo de vídeo não está corrompido
-- Confirme se há espaço suficiente em disco
-- Verifique os logs em `%LOCALAPPDATA%\Futtage\Logs\`
+    MP4 (H.264/H.265)
+    AVI
+    MOV
+    MKV
+    WMV
+    FLV
+    WEBM
 
-## 📞 Suporte
+Output Format
 
-- **GitHub:** https://github.com/eaj1998/futtage
-- **Email:** edipo1998@gmail.com
-- **Issues:** Use o GitHub Issues para reportar bugs
+    MP4 (H.264) - optimized for YouTube
 
----
+Thumbnail Formats
 
-**Copyright © 2025 EAJ. Todos os direitos reservados.**
+    JPEG/JPG
+    PNG
+    BMP
+    WEBP
+
+🐛 Troubleshooting
+FFmpeg Not Found
+
+Problem: Video processing fails with FFmpeg error Solution:
+
+    Ensure ffmpeg.exe is in the application folder
+    Download FFmpeg from: https://www.gyan.dev/ffmpeg/builds/
+    Extract ffmpeg.exe to the same folder as Futtage.exe
+
+YouTube Authentication Failed
+
+Problem: Cannot login to Google/YouTube Solutions:
+
+    Verify your Client ID and Secret in appsettings.json
+    Check that YouTube Data API v3 is enabled in Google Cloud Console
+    Ensure OAuth consent screen is properly configured
+    Try logging out and logging back in
+
+Video Processing Errors
+
+Problem: Concatenation or trimming fails Solutions:
+
+    Verify all input videos are not corrupted
+    Ensure sufficient disk space is available
+    Check that all videos have compatible codecs
+    Try processing smaller batches of videos
+
+Upload Failures
+
+Problem: YouTube upload fails or times out Solutions:
+
+    Check your internet connection stability
+    Verify video file size (YouTube limit is 256GB or 12 hours)
+    Ensure you have sufficient upload quota
+    Try uploading during off-peak hours
+
+Log Files
+
+Application logs are stored in: %LOCALAPPDATA%\Futtage\Logs\
+🔒 Privacy & Security
+
+    Local Processing: All video processing happens locally on your machine
+    Secure Authentication: Uses Google's OAuth 2.0 for secure login
+    No Data Collection: Futtage doesn't collect or store personal data
+    Temporary Files: Automatically cleaned up after processing
+    Credentials: Stored securely using Windows Credential Manager
+
+🚀 Advanced Usage
+Command Line Arguments
+
+Currently, Futtage is designed as a GUI application, but future versions may support command-line operations.
+Batch Processing
+
+    Select multiple videos at once for efficient processing
+    Videos are processed in the order you arrange them
+    Use the reorder buttons to change sequence
+
+Custom Thumbnails
+
+    Thumbnails are automatically generated from the first frame
+    Custom thumbnails should be 1280x720 pixels for best quality
+    JPG format is recommended for smaller file sizes
+
+📞 Support & Contributing
+Getting Help
+
+    GitHub Repository: https://github.com/eaj1998/futtage
+    Issues: Report bugs via GitHub Issues
+    Email: edipo1998@gmail.com
+
+Contributing
+
+Contributions are welcome! Please:
+
+    Fork the repository
+    Create a feature branch
+    Submit a pull request with detailed description
+
+Building from Source
+
+    Install .NET 8.0 SDK
+    Clone the repository
+    Download FFmpeg and place in project root
+    Configure appsettings.json with your credentials
+    Build with dotnet build or Visual Studio
+
+📝 License
+
+Copyright © 2025 EAJ. All rights reserved.
+
+This software is provided "as is" without warranty. Use at your own risk.
