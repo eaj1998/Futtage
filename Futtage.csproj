@@ -10,7 +10,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <Content Include="faz-o-simples.ico" />
+=======
+    <Compile Remove="Core\Exceptions\**" />
+    <EmbeddedResource Remove="Core\Exceptions\**" />
+    <None Remove="Core\Exceptions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ffmpeg.exe" />
+    <None Remove="futtage.log" />
+    <None Remove="Resources\CAPA.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="faz-o-simples.ico" />
+>>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +41,25 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+<<<<<<< HEAD
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.69.0.3764" />
+=======
+    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.69.0.3764" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="ffmpeg.exe" />
+    <Resource Include="futtage.log" />
+    <Resource Include="Resources\CAPA.png" />
+>>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
   </ItemGroup>
 
   <ItemGroup>
