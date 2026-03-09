@@ -1,6 +1,6 @@
 ﻿namespace Futtage.Core.Models
 {
-    public class YouTubeUploadRequest
+    public record YouTubeUploadRequest
     {
         public string VideoFilePath { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;

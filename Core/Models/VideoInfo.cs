@@ -2,7 +2,7 @@
 
 namespace Futtage.Core.Models
 {
-    public class VideoInfo
+    public record VideoInfo
     {
         public string FilePath { get; set; } = string.Empty;
         public TimeSpan Duration { get; set; }

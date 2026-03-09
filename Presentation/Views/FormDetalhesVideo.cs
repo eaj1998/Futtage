@@ -21,8 +21,17 @@ namespace Futtage
         public FormDetalhesVideo(DateTime dataDeCriacao)
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.TopMost = true;
             LoadIcon();
             SetupDefaultValues(dataDeCriacao);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            this.TopMost = false;
+            this.Activate();
         }
 
 

@@ -1,30 +1,14 @@
-<<<<<<< HEAD
-=======
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Windows.Forms;
 using Futtage.Infrastructure.Extensions;
 using Futtage.Presentation.Presenters;
-
->>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
 namespace Futtage
 {
     internal static class Program
     {
-<<<<<<< HEAD
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
-=======
         [STAThread]
         static void Main()
         {
@@ -199,7 +183,6 @@ namespace Futtage
                 MessageBoxIcon.Error);
 
             Environment.Exit(1);
->>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
         }
     }
 }

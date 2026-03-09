@@ -221,7 +221,7 @@ namespace Futtage.Core.Services
             }
         }
 
-        public async Task<string> UploadVideoAsync(YouTubeUploadRequest request, IProgress<ProcessingProgress>? progress = null)
+        public async Task<string> UploadVideoAsync(YouTubeUploadRequest request, IProgress<ProcessingProgress>? progress = null, CancellationToken cancellationToken = default)
         {
          
             try
@@ -261,18 +261,18 @@ namespace Futtage.Core.Services
                 var fileSize = fileStream.Length;
 
                 var videosInsertRequest = _youtubeService.Videos.Insert(video, "snippet,status", fileStream, "video/*");
-                videosInsertRequest.ChunkSize = 1024 * 1024; 
+                videosInsertRequest.ChunkSize = 8 * 1024 * 1024; // 8MB
 
-                var progressTask = SimulateUploadProgress(progress, fileSize);
+                var progressTask = SimulateUploadProgress(progress, fileSize, cancellationToken);
 
                 videosInsertRequest.ResponseReceived += (video) =>
                 {
                     _logger.LogInfo($"Upload concluído. Video ID: {video.Id}");
                 };
 
-                var uploadTask = videosInsertRequest.UploadAsync();
+                var uploadTask = videosInsertRequest.UploadAsync(cancellationToken);
 
-                await Task.WhenAll(uploadTask, progressTask);
+                await Task.WhenAll(uploadTask, progressTask).WaitAsync(cancellationToken);
 
                 var uploadResult = await uploadTask;
 
@@ -701,7 +701,7 @@ namespace Futtage.Core.Services
             _logger.LogInfo("Informações padrão do usuário definidas");
         }
 
-        private async Task SimulateUploadProgress(IProgress<ProcessingProgress>? progress, long fileSize)
+        private async Task SimulateUploadProgress(IProgress<ProcessingProgress>? progress, long fileSize, CancellationToken cancellationToken)
         {
             if (progress == null) return;
 
@@ -711,6 +711,8 @@ namespace Futtage.Core.Services
 
             for (int i = 0; i <= steps; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var percentage = (i * 99) / steps; 
                 var mbSent = (fileSize * i / steps) / (1024.0 * 1024.0);
                 var mbTotal = fileSize / (1024.0 * 1024.0);
@@ -726,7 +728,7 @@ namespace Futtage.Core.Services
 
                 if (i < steps)
                 {
-                    await Task.Delay((int)stepTime);
+                    await Task.Delay((int)stepTime, cancellationToken);
                 }
             }
         }

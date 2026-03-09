@@ -18,6 +18,7 @@ namespace Futtage.Presentation.Presenters
         private string _selectedThumbnailPath = string.Empty;
         private bool _isAuthenticated = false;
         private UserInfo? _currentUser;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         private Form1? _mainForm;
 
@@ -253,11 +254,6 @@ namespace Futtage.Presentation.Presenters
 
         public UserInfo? CurrentUser => _currentUser;
 
-        public bool CanAdvanceToNextStep()
-        {
-            return _selectedVideos.Count >= 2 && _isAuthenticated;
-        }
-
         public void OnNextStepClicked()
         {
             if (_selectedVideos.Count < 2)
@@ -266,13 +262,28 @@ namespace Futtage.Presentation.Presenters
                 return;
             }
 
-            if (!_isAuthenticated)
-            {
-                ShowError("É necessário fazer login com sua conta Google para continuar.");
-                return;
-            }
-
             NavigateToTab(1);
+        }
+
+        public void RemoveVideo(int index)
+        {
+            if (index >= 0 && index < _selectedVideos.Count)
+            {
+                _selectedVideos.RemoveAt(index);
+                UpdateVideoListUI();
+            }
+        }
+
+        public void MoveVideo(int oldIndex, int newIndex)
+        {
+            if (oldIndex >= 0 && oldIndex < _selectedVideos.Count && 
+                newIndex >= 0 && newIndex < _selectedVideos.Count)
+            {
+                var item = _selectedVideos[oldIndex];
+                _selectedVideos.RemoveAt(oldIndex);
+                _selectedVideos.Insert(newIndex, item);
+                UpdateVideoListUI();
+            }
         }
 
         public async Task OnConcatenateVideosClickedAsync()
@@ -282,6 +293,8 @@ namespace Futtage.Presentation.Presenters
                 ShowError("É necessário pelo menos 2 vídeos para concatenação.");
                 return;
             }
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
@@ -300,7 +313,7 @@ namespace Futtage.Presentation.Presenters
                     ShowProgress(p.Message, p.Percentage);
                 });
 
-                _concatenatedVideoPath = await _videoService.ConcatenateAsync(videoPaths, outputPath, progress);
+                _concatenatedVideoPath = await _videoService.ConcatenateAsync(videoPaths, outputPath, progress, _cancellationTokenSource.Token);
                 _finalVideoPath = _concatenatedVideoPath;
 
                 HideProgress();
@@ -310,6 +323,12 @@ namespace Futtage.Presentation.Presenters
                 await Task.Delay(500);
                 NavigateToTab(2);
             }
+            catch (OperationCanceledException)
+            {
+                HideProgress();
+                ShowWarning("A concatenação de vídeos foi cancelada.");
+                _logger.LogInfo("Concatenação cancelada pelo usuário.");
+            }
             catch (Exception ex)
             {
                 HideProgress();
@@ -318,9 +337,13 @@ namespace Futtage.Presentation.Presenters
             }
             finally
             {
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
                 HideProgress();
             }
         }
+        
+
         public void OnThumbnailTabEntered()
         {
             if (string.IsNullOrEmpty(_selectedThumbnailPath))
@@ -363,6 +386,8 @@ namespace Futtage.Presentation.Presenters
                 return;
             }
 
+            _cancellationTokenSource = new CancellationTokenSource();
+
             try
             {
                 if (!TimeSpan.TryParse(startTime, out var start) || !TimeSpan.TryParse(endTime, out var end))
@@ -385,7 +410,7 @@ namespace Futtage.Presentation.Presenters
                     ShowProgress(p.Message, p.Percentage);
                 });
 
-                _finalVideoPath = await _videoService.TrimAsync(_concatenatedVideoPath, start, end, outputPath, progress);
+                _finalVideoPath = await _videoService.TrimAsync(_concatenatedVideoPath, start, end, outputPath, progress, _cancellationTokenSource.Token);
 
                 HideProgress();
                 ShowSuccess($"Vídeo cortado com sucesso!\nSalvo em: {_finalVideoPath}");
@@ -395,6 +420,12 @@ namespace Futtage.Presentation.Presenters
                 await Task.Delay(500);
                 NavigateToTab(3);
             }
+            catch (OperationCanceledException)
+            {
+                HideProgress();
+                ShowWarning("O corte de vídeo foi cancelado.");
+                _logger.LogInfo("Corte de vídeo cancelado pelo usuário.");
+            }
             catch (Exception ex)
             {
                 HideProgress();
@@ -403,6 +434,8 @@ namespace Futtage.Presentation.Presenters
             }
             finally
             {
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
                 HideProgress();
             }
         }
@@ -501,8 +534,8 @@ namespace Futtage.Presentation.Presenters
 
             if (!_isAuthenticated)
             {
-                ShowError("É necessário estar autenticado para fazer upload.");
-                return;
+                await OnAuthenticationClickedAsync();
+                if (!_isAuthenticated) return;
             }
 
             if (!_fileService.FileExists(_finalVideoPath))
@@ -510,6 +543,8 @@ namespace Futtage.Presentation.Presenters
                 ShowError($"Arquivo de vídeo não encontrado: {_finalVideoPath}");
                 return;
             }
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
@@ -523,7 +558,7 @@ namespace Futtage.Presentation.Presenters
                     ShowProgress(p.Message, p.Percentage);
                 });
 
-                var videoId = await _youTubeService.UploadVideoAsync(uploadRequest, progress);
+                var videoId = await _youTubeService.UploadVideoAsync(uploadRequest, progress, _cancellationTokenSource.Token);
 
                 if (!string.IsNullOrEmpty(_selectedThumbnailPath) && _fileService.FileExists(_selectedThumbnailPath))
                 {
@@ -543,6 +578,12 @@ namespace Futtage.Presentation.Presenters
                 ShowUploadSuccess(videoId, uploadRequest);
                 _logger.LogInfo($"Upload completo - Video ID: {videoId}");
             }
+            catch (OperationCanceledException)
+            {
+                HideProgress();
+                ShowWarning("O upload para o YouTube foi cancelado.");
+                _logger.LogInfo("Upload para o YouTube cancelado pelo usuário.");
+            }
             catch (Exception ex)
             {
                 HideProgress();
@@ -551,6 +592,8 @@ namespace Futtage.Presentation.Presenters
             }
             finally
             {
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = null;
                 HideProgress();
             }
         }
@@ -650,7 +693,7 @@ namespace Futtage.Presentation.Presenters
                 1 => _selectedVideos.Count >= 2,
                 2 => !string.IsNullOrEmpty(_concatenatedVideoPath),
                 3 => !string.IsNullOrEmpty(_finalVideoPath),
-                4 => _isAuthenticated && !string.IsNullOrEmpty(_finalVideoPath),
+                4 => !string.IsNullOrEmpty(_finalVideoPath),
                 _ => false
             };
         }
@@ -797,6 +840,17 @@ namespace Futtage.Presentation.Presenters
             }
         }
 
+        public void CancelCurrentOperation()
+        {
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _logger.LogInfo("Cancelamento de operação solicitado.");
+                _cancellationTokenSource.Cancel();
+            }
+        }
+
+
+
         private void ShowError(string message)
         {
             if (_mainForm != null)
@@ -805,12 +859,12 @@ namespace Futtage.Presentation.Presenters
                 {
                     _mainForm.Invoke(new Action(() =>
                     {
-                        MessageBox.Show(message, "Erro - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(_mainForm, message, "Erro - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                 }
                 else
                 {
-                    MessageBox.Show(message, "Erro - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(_mainForm, message, "Erro - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -823,12 +877,12 @@ namespace Futtage.Presentation.Presenters
                 {
                     _mainForm.Invoke(new Action(() =>
                     {
-                        MessageBox.Show(message, "Sucesso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(_mainForm, message, "Sucesso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }));
                 }
                 else
                 {
-                    MessageBox.Show(message, "Sucesso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(_mainForm, message, "Sucesso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -840,12 +894,12 @@ namespace Futtage.Presentation.Presenters
                 {
                     _mainForm.Invoke(new Action(() =>
                     {
-                        MessageBox.Show(message, "Aviso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(_mainForm, message, "Atenção - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }));
                 }
                 else
                 {
-                    MessageBox.Show(message, "Aviso - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(_mainForm, message, "Atenção - Futtage", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }

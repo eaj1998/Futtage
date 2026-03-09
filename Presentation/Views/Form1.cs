@@ -24,14 +24,25 @@ namespace Futtage
         private ModernProgressBar? _modernProgressBar;
         private Label? _progressLabel;
         private Panel? _progressPanel;
+        private Button? _btnCancel;
 
         public Form1()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.TopMost = true;
+
             if (btnLogout != null)
             {
                 btnLogout.Enabled = false;
             }
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            this.TopMost = false;
+            this.Activate();
         }
 
         public void SetPresenter(MainPresenter presenter)
@@ -202,8 +213,15 @@ namespace Futtage
         {
             if (lstArquivosSelecionados.SelectedIndex >= 0)
             {
-                lstArquivosSelecionados.Items.RemoveAt(lstArquivosSelecionados.SelectedIndex);
-                UpdateUIState();
+                if (_presenter != null)
+                {
+                    _presenter.RemoveVideo(lstArquivosSelecionados.SelectedIndex);
+                }
+                else
+                {
+                    lstArquivosSelecionados.Items.RemoveAt(lstArquivosSelecionados.SelectedIndex);
+                    UpdateUIState();
+                }
             }
         }
 
@@ -460,14 +478,30 @@ namespace Futtage
             _modernProgressBar = new ModernProgressBar
             {
                 Location = new Point(10, 30),
-                Size = new Size(660, 20),
+                Size = new Size(550, 20),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 ProgressColor = Color.FromArgb(0, 122, 255),
                 ShowPercentage = true
             };
 
+            // Botão Cancelar
+            _btnCancel = new Button
+            {
+                Text = "Cancelar",
+                Location = new Point(570, 28),
+                Size = new Size(100, 24),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = Color.FromArgb(220, 53, 69),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            _btnCancel.FlatAppearance.BorderSize = 0;
+            _btnCancel.Click += BtnCancel_Click;
+
             _progressPanel.Controls.Add(_progressLabel);
             _progressPanel.Controls.Add(_modernProgressBar);
+            _progressPanel.Controls.Add(_btnCancel);
 
             // Adicionar ao formulário principal
             this.Controls.Add(_progressPanel);
@@ -545,6 +579,11 @@ namespace Futtage
             System.Diagnostics.Debug.WriteLine("Controles reabilitados após processamento");
         }
 
+        private void BtnCancel_Click(object? sender, EventArgs e)
+        {
+            _presenter?.CancelCurrentOperation();
+        }
+
         #endregion
 
         #region Métodos Auxiliares
@@ -579,7 +618,7 @@ namespace Futtage
             switch (currentTab)
             {
                 case 0: // Seleção
-                    btnProximoPasso1.Enabled = hasEnoughVideos && isAuthenticated && !_isProcessing;
+                    btnProximoPasso1.Enabled = hasEnoughVideos && !_isProcessing;
                     btnSelecionarArquivo.Enabled = !_isProcessing;
                     btnAutenticacao.Enabled = !_isProcessing && !isAuthenticated;
                     break;
@@ -696,10 +735,21 @@ namespace Futtage
             var newIndex = selectedIndex + direction;
             if (newIndex < 0 || newIndex >= lstArquivosSelecionados.Items.Count) return;
 
-            var item = lstArquivosSelecionados.Items[selectedIndex];
-            lstArquivosSelecionados.Items.RemoveAt(selectedIndex);
-            lstArquivosSelecionados.Items.Insert(newIndex, item);
-            lstArquivosSelecionados.SelectedIndex = newIndex;
+            if (_presenter != null)
+            {
+                _presenter.MoveVideo(selectedIndex, newIndex);
+                if (newIndex >= 0 && newIndex < lstArquivosSelecionados.Items.Count)
+                {
+                    lstArquivosSelecionados.SelectedIndex = newIndex;
+                }
+            }
+            else
+            {
+                var item = lstArquivosSelecionados.Items[selectedIndex];
+                lstArquivosSelecionados.Items.RemoveAt(selectedIndex);
+                lstArquivosSelecionados.Items.Insert(newIndex, item);
+                lstArquivosSelecionados.SelectedIndex = newIndex;
+            }
         }
 
         private void ShowNavigationError(int tabIndex)
@@ -709,7 +759,7 @@ namespace Futtage
                 1 => "Selecione pelo menos 2 vídeos antes de continuar para a concatenação.",
                 2 => "É necessário concatenar os vídeos primeiro.",
                 3 => "É necessário processar o vídeo antes de definir a thumbnail.",
-                4 => "É necessário estar autenticado e ter um vídeo processado para fazer upload.",
+                4 => "É necessário ter um vídeo processado para fazer upload.",
                 _ => "Não é possível navegar para esta aba no momento."
             };
 

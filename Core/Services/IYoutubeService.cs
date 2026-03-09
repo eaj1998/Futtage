@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Futtage.Core.Models;
 
 namespace Futtage.Core.Services
@@ -9,7 +10,7 @@ namespace Futtage.Core.Services
         Task LogoutAsync();
         Task<bool> IsAuthenticatedAsync();
         Task<UserInfo> GetUserInfoAsync();
-        Task<string> UploadVideoAsync(YouTubeUploadRequest request, IProgress<ProcessingProgress>? progress = null);
+        Task<string> UploadVideoAsync(YouTubeUploadRequest request, IProgress<ProcessingProgress>? progress = null, CancellationToken cancellationToken = default);
         Task<bool> SetThumbnailAsync(string videoId, string thumbnailPath);
         void ClearCredentials();
     }

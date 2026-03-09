@@ -15,6 +15,15 @@ namespace Futtage
         public FormAguarde()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.TopMost = true;
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            this.TopMost = false;
+            this.Activate();
         }
 
         private void FormAguarde_Load(object sender, EventArgs e)

@@ -22,7 +22,7 @@ namespace Futtage.Core.Services
             _ffmpegPath = ffmpegPath;
         }
 
-        public async Task<string> ConcatenateAsync(List<string> videoPaths, string outputPath, IProgress<ProcessingProgress>? progress = null)
+        public async Task<string> ConcatenateAsync(List<string> videoPaths, string outputPath, IProgress<ProcessingProgress>? progress = null, CancellationToken cancellationToken = default)
         {
             if (videoPaths == null || videoPaths.Count < 2)
                 throw new ArgumentException("É necessário pelo menos 2 vídeos para concatenação");
@@ -55,13 +55,27 @@ namespace Futtage.Core.Services
                 // Comando FFmpeg para concatenação
                 var arguments = $"-y -f concat -safe 0 -i \"{listFile}\" -c copy \"{outputPath}\"";
 
-                var result = await ExecuteFFmpegAsync(ffmpegPath, arguments, progress, 10, 90);
+                try
+                {
+                    var videoInfos = await GetMultipleVideoInfoAsync(videoPaths);
+                    var expectedDuration = TimeSpan.FromTicks(videoInfos.Sum(v => v.Duration.Ticks));
 
-                // Limpar arquivo temporário
-                try { File.Delete(listFile); } catch { }
+                    var result = await ExecuteFFmpegAsync(ffmpegPath, arguments, progress, 10, 90, false, cancellationToken, expectedDuration);
+                    if (!result.Success)
+                        throw new Exception($"FFmpeg falhou: {result.ErrorOutput}");
+                }
+                finally
+                {
+                    // Limpar arquivo temporário
+                    try { File.Delete(listFile); } catch { }
+                    
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        try { if (File.Exists(outputPath)) File.Delete(outputPath); } catch { }
+                    }
+                }
 
-                if (!result.Success)
-                    throw new Exception($"FFmpeg falhou: {result.ErrorOutput}");
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (!File.Exists(outputPath))
                     throw new Exception("Arquivo de saída não foi criado");
@@ -78,7 +92,7 @@ namespace Futtage.Core.Services
             }
         }
 
-        public async Task<string> TrimAsync(string inputPath, TimeSpan start, TimeSpan end, string outputPath, IProgress<ProcessingProgress>? progress = null)
+        public async Task<string> TrimAsync(string inputPath, TimeSpan start, TimeSpan end, string outputPath, IProgress<ProcessingProgress>? progress = null, CancellationToken cancellationToken = default)
         {
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException("Arquivo de entrada não encontrado", inputPath);
@@ -106,10 +120,22 @@ namespace Futtage.Core.Services
 
                 progress?.Report(new ProcessingProgress(10, "Iniciando corte..."));
 
-                var result = await ExecuteFFmpegAsync(ffmpegPath, arguments, progress, 10, 90);
-
-                if (!result.Success)
-                    throw new Exception($"FFmpeg falhou: {result.ErrorOutput}");
+                try
+                {
+                    var result = await ExecuteFFmpegAsync(ffmpegPath, arguments, progress, 10, 90, false, cancellationToken, duration);
+                    
+                    if (!result.Success)
+                        throw new Exception($"FFmpeg falhou: {result.ErrorOutput}");
+                }
+                finally
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        try { if (File.Exists(outputPath)) File.Delete(outputPath); } catch { }
+                    }
+                }
+                
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (!File.Exists(outputPath))
                     throw new Exception("Arquivo cortado não foi criado");
@@ -280,7 +306,9 @@ namespace Futtage.Core.Services
             IProgress<ProcessingProgress>? progress,
             int startProgress = 0,
             int endProgress = 100,
-            bool captureOutput = false)
+            bool captureOutput = false,
+            CancellationToken cancellationToken = default,
+            TimeSpan? expectedDuration = null)
         {
             using var process = new Process
             {
@@ -303,23 +331,35 @@ namespace Futtage.Core.Services
 
             // Capturar output se necessário
             var outputTask = captureOutput ?
-                ReadStreamAsync(process.StandardOutput, s => output += s) :
+                ReadStreamAsync(process.StandardOutput, s => output += s, cancellationToken) :
                 Task.CompletedTask;
 
             // Monitorar progresso através do stderr
-            var progressTask = MonitorProgressAsync(process.StandardError, progress, startProgress, endProgress, s => errorOutput += s);
+            var progressTask = MonitorProgressAsync(process.StandardError, progress, startProgress, endProgress, s => errorOutput += s, cancellationToken, expectedDuration);
 
-            await Task.WhenAll(outputTask, progressTask);
-            await process.WaitForExitAsync();
+            try
+            {
+                await Task.WhenAll(outputTask, progressTask).WaitAsync(cancellationToken);
+                await process.WaitForExitAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
+                throw;
+            }
 
             return (process.ExitCode == 0, output, errorOutput);
         }
 
-        private async Task ReadStreamAsync(StreamReader reader, Action<string> onLineRead)
+        private async Task ReadStreamAsync(StreamReader reader, Action<string> onLineRead, CancellationToken cancellationToken)
         {
             string? line;
-            while ((line = await reader.ReadLineAsync()) != null)
+            while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 onLineRead(line + Environment.NewLine);
             }
         }
@@ -329,16 +369,19 @@ namespace Futtage.Core.Services
             IProgress<ProcessingProgress>? progress,
             int startProgress,
             int endProgress,
-            Action<string> onLineRead)
+            Action<string> onLineRead,
+            CancellationToken cancellationToken,
+            TimeSpan? expectedDuration = null)
         {
             var durationRegex = new Regex(@"Duration: (\d+):(\d+):(\d+\.\d+)");
             var progressRegex = new Regex(@"time=(\d+):(\d+):(\d+\.\d+)");
 
-            TimeSpan? totalDuration = null;
+            TimeSpan? totalDuration = expectedDuration;
             string? line;
 
-            while ((line = await errorStream.ReadLineAsync()) != null)
+            while ((line = await errorStream.ReadLineAsync(cancellationToken)) != null)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 onLineRead(line + Environment.NewLine);
 
                 if (progress == null) continue;
@@ -358,7 +401,7 @@ namespace Futtage.Core.Services
 
                 // Extrair progresso atual
                 var progressMatch = progressRegex.Match(line);
-                if (progressMatch.Success && totalDuration.HasValue)
+                if (progressMatch.Success && totalDuration.HasValue && totalDuration.Value.TotalSeconds > 0)
                 {
                     if (TimeSpan.TryParse($"{progressMatch.Groups[1].Value}:{progressMatch.Groups[2].Value}:{progressMatch.Groups[3].Value}", out var currentTime))
                     {
@@ -387,19 +430,24 @@ namespace Futtage.Core.Services
         //}
 
        private Task CreateFileListAsync(List<string> videoPaths, string listFilePath)
-{
-    var listaDeArquivos = new System.Text.StringBuilder();
-    foreach (var path in videoPaths)
-    {
-        string caminhoCorrigido = path.ToString().Replace("\\", "/");
-        listaDeArquivos.AppendLine($"file '{caminhoCorrigido}'");
-    }
-    
-    // Usar ASCII para evitar qualquer problema de encoding
-    System.IO.File.WriteAllText(listFilePath, listaDeArquivos.ToString(), System.Text.Encoding.ASCII);
-    
-    return Task.CompletedTask;
-}
+        {
+            var listaDeArquivos = new System.Text.StringBuilder();
+
+            foreach (var path in videoPaths)
+            {
+                // Escape single quotes for FFmpeg concat format (e.g. John's -> John'\''s)
+                var escapedPath = path.Replace("'", @"'\''");
+                // Convert backslashes to forward slashes
+                escapedPath = escapedPath.Replace("\\", "/");
+
+                listaDeArquivos.AppendLine($"file '{escapedPath}'");
+            }
+            
+            // Usar UTF-8 sem BOM (Byte Order Mark) porque FFmpeg é rígido quanto a textos BOM
+            System.IO.File.WriteAllText(listFilePath, listaDeArquivos.ToString(), new System.Text.UTF8Encoding(false));
+            
+            return Task.CompletedTask;
+        }     
 
         private VideoInfo ParseFFprobeOutput(string videoPath, string jsonOutput)
         {
@@ -417,7 +465,7 @@ namespace Futtage.Core.Services
 
                 // Extrair duração
                 var durationMatch = Regex.Match(jsonOutput, @"""duration""\s*:\s*""([^""]+)""");
-                if (durationMatch.Success && double.TryParse(durationMatch.Groups[1].Value, out var durationSeconds))
+                if (durationMatch.Success && double.TryParse(durationMatch.Groups[1].Value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var durationSeconds))
                 {
                     videoInfo.Duration = TimeSpan.FromSeconds(durationSeconds);
                 }
