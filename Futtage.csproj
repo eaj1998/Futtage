@@ -7,26 +7,25 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageIcon>faz_o_simples-removebg-preview.png</PackageIcon>
+    <ApplicationIcon>faz-o-simples.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-    <Content Include="faz-o-simples.ico" />
-=======
     <Compile Remove="Core\Exceptions\**" />
     <EmbeddedResource Remove="Core\Exceptions\**" />
     <None Remove="Core\Exceptions\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ffmpeg.exe" />
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Remove="futtage.log" />
     <None Remove="Resources\CAPA.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="faz-o-simples.ico" />
->>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
   </ItemGroup>
 
   <ItemGroup>
@@ -34,16 +33,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <Content Include="bin\Debug\net8.0-windows\ffmpeg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
-<<<<<<< HEAD
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.69.0.3764" />
-=======
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.69.0.3764" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
@@ -55,12 +48,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="ffmpeg.exe" />
-    <Resource Include="futtage.log" />
-    <Resource Include="Resources\CAPA.png" />
->>>>>>> d41ffedcd2d253031af9cc1242882502c952df34
-  </ItemGroup>
+
 
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -79,6 +67,9 @@
 
   <ItemGroup>
     <None Update=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
